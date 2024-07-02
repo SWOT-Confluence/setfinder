@@ -151,15 +151,17 @@ def main():
 
     # Get list of reaches to make sets out of, if expanded look for /mnt/input/swot, if not look for reaches_of_interest.json
     reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
-    save_reach_list(outdir=outdir, reach_list=reach_list, continent_prefix=continent_prefix, expanded=expanded)
+    
 
     reach_dict_list = parse_reach_list_for_output(reach_list=reach_list, continent_prefix=continent_prefix, sword_version=sword_version, outdir=outdir)
 
     # Generate sets for FLPEs
-    generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
+    reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
                     output_dir = outdir, algorithms = algorithms, 
                         sword_dataset = sword, sword_filepath = sword_filepath, 
                         expanded = expanded)
+
+    save_reach_list(outdir=outdir, reach_list=reach_list, continent_prefix=continent_prefix, expanded=expanded)
 
 # --------------------------------------------------
 if __name__ == '__main__':

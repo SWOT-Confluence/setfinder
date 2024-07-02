@@ -256,7 +256,7 @@ class Sets:
     def remove_duplicate_or_high_overlap_sets(self,InversionSets,swordreachids,sword_data_continent):
         print('removing dupes...')
         #1 switch inversion set datatype from dict to list
-        InversionSetsList=self.get_IS_list(InversionSets,'','','remove_dupes') # this returns a list of dictionaries of reaches
+        InversionSetsList, all_reaches=self.get_IS_list(InversionSets,'','','remove_dupes') # this returns a list of dictionaries of reaches
 
         # idx=3
         # print('in `remove_duplicate...`. Inversion Set for index=',idx,InversionSetsList[idx])
@@ -547,19 +547,22 @@ class Sets:
         #swordfile=swordfile[0:2]+'_sword_v16_patch.nc'        
         sosfile=self.reaches[0]['sos']
 
-        InversionSetsWrite=self.get_IS_list(InversionSets,swordfile,sosfile,'writing')        
+        InversionSetsWrite, all_reaches=self.get_IS_list(InversionSets,swordfile,sosfile,'writing')        
 
         with open(out_json, 'w') as json_file:
             json.dump(InversionSetsWrite, json_file, indent=2)
+        return all_reaches
 
     def get_IS_list(self,InversionSets,swordfile,sosfile,mode):
         #makes a list of inversion sets, where each list item is a another list of inversion set data
         #each inversion set list item is a dict of the data for each reach
 
         InversionSetsList=[]
+        all_reaches = []
         for IS in InversionSets:
             InversionSetWrite=[]
             for reach in InversionSets[IS]['ReachList']:
+                all_reaches.append(reach)
                 reachdict={}
                 reachdict['reach_id']=int(reach)
                 reachdict['sword']=swordfile
@@ -570,7 +573,7 @@ class Sets:
                 InversionSetWrite.append(reachdict)
             InversionSetsList.append(InversionSetWrite)
         
-        return InversionSetsList
+        return InversionSetsList, all_reaches
 
     def print_stats(self,InversionSets):
         # output some stats

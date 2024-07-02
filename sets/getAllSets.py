@@ -96,10 +96,11 @@ def generate_sets(reaches:list, continent:str, output_dir:str, algorithms:list, 
         InversionSets=algoset.getsets()
 
         # output to json file        
-        algoset.write_inversion_set_data(InversionSets,output_dir, expanded)
+        all_reaches = algoset.write_inversion_set_data(InversionSets,output_dir, expanded)
 
     #close sword dataset
-    sword_dataset.close()  
+    sword_dataset.close()
+    return all_reaches
 
 def SetParameters(algo, cont):
     """Seting parameters for setfinder
@@ -175,10 +176,10 @@ def SetParameters(algo, cont):
  
     return params
 
-if __name__ == "__main__":
-    from datetime import datetime
-    start = datetime.now()
-    main()
-    end = datetime.now()
-    print(f"Execution time: {end - start}")
+# if __name__ == "__main__":
+#     from datetime import datetime
+#     start = datetime.now()
+#     main()
+#     end = datetime.now()
+#     print(f"Execution time: {end - start}")
 
