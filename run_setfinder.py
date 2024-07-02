@@ -2,9 +2,11 @@
 """
 Author : Travis Simmons
 Date   : July 2nd 2024
-Purpose: Process reach data to create set.jsons for FLPE algorithms
+Purpose: Process reach data to create set jsons for FLPE algorithms
 """
 # Sample deployment
+
+# python3 run_setfinder.py -i 1 -a MetroMan -n /mnt/input/ -o . -s 16
 
 # standard imports
 import argparse
@@ -71,12 +73,11 @@ def get_continent(indir:str, index:int):
 
     continent_prefix = list(data[index].keys())[0]
 
-    continent_id_list = data[index][continent_prefix]
+    continent_id_list = [str(i) for i in data[index][continent_prefix]]
 
     return continent_prefix, continent_id_list
 
 def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expanded:bool):
-
 
     # read in data depending on if it is the first or second run of the setfinder and return a list of reaches to consider
 
@@ -84,7 +85,6 @@ def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expa
         with open(os.path.join(indir, 'reaches_of_interest.json')) as jsonfile:
             reaches_of_interest = json.load(jsonfile)
         
-        #filter by continent
         reach_list = [i for i in reaches_of_interest if str(i)[0] in continent_id_list]
     else:
         reach_list = [os.path.basename(i).split('_')[0] for i in glob.glob(os.path.join(indir, 'swot', '*.nc'))]
