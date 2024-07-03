@@ -104,13 +104,6 @@ def save_reach_list(outdir:str, reach_list:list, continent_prefix:str, expanded:
 
 def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int):
 
-#   {
-#     "reach_id": 12798000121,
-#     "sword": "af_sword_v16_patch.nc",
-#     "swot": "12798000121_SWOT.nc",
-#     "sos": "af_sword_v16_SOS_priors.nc"
-#   }
-
     reach_dict_list = []
     for i in reach_list:
         reach_dict_list.append(
