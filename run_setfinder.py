@@ -102,7 +102,7 @@ def save_reach_list(outdir:str, reach_list:list, continent_prefix:str, expanded:
     with open(output_filepath, 'w') as jsonfile:
         json.dump(reach_list, jsonfile)
 
-def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int,outdir:str):
+def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int):
 
 #   {
 #     "reach_id": 12798000121,
@@ -153,7 +153,7 @@ def main():
     reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
     
 
-    reach_dict_list = parse_reach_list_for_output(reach_list=reach_list, continent_prefix=continent_prefix, sword_version=sword_version, outdir=outdir)
+    reach_dict_list = parse_reach_list_for_output(reach_list=reach_list, continent_prefix=continent_prefix, sword_version=sword_version)
 
     # Generate sets for FLPEs
     reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
@@ -161,7 +161,7 @@ def main():
                         sword_dataset = sword, sword_filepath = sword_filepath, 
                         expanded = expanded)
 
-    save_reach_list(outdir=outdir, reach_list=reach_list, continent_prefix=continent_prefix, expanded=expanded)
+    save_reach_list(outdir=outdir, reach_list=list(set(reach_list)), continent_prefix=continent_prefix, expanded=expanded)
 
 # --------------------------------------------------
 if __name__ == '__main__':
