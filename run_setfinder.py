@@ -60,6 +60,11 @@ def get_args():
                         help='Sword version number',
                         metavar='sword_version',
                         type=int)
+    
+    parser.add_argument('-g', 
+                        '--globalrun', 
+                        action='store_true', 
+                        help='Global execution so load reaches from SWORD')
 
     return parser.parse_args()
 
@@ -127,6 +132,7 @@ def main():
     outdir = args.outdir
     sword_version = args.sword_version
     expanded = args.expanded
+    global_run = args.globalrun
 
     # Get index, index -235 indicates that we are running in aws in the management account
     if index == -235:
@@ -143,8 +149,10 @@ def main():
     sword = ncf.Dataset(sword_filepath)
 
     # Get list of reaches to make sets out of, if expanded look for /mnt/input/swot, if not look for reaches_of_interest.json
-    reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
-    
+    if global_run:
+        reach_list = [str(reach) for reach in sword["reaches"]["reach_id"][:]]
+    else:
+        reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
 
     reach_dict_list = parse_reach_list_for_output(reach_list=reach_list, continent_prefix=continent_prefix, sword_version=sword_version)
 
