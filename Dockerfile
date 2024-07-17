@@ -1,27 +1,22 @@
-FROM ubuntu:18.04
+# Stage 0 - Create from Python3.12 image
+FROM python:3.12-slim-bookworm as stage0
+# FROM python:3.12-slim-bookworm
 
-WORKDIR /opt
-COPY . /opt
+# Stage 1 - Debian dependencies
+FROM stage0 as stage1
+RUN apt update \
+        && DEBIAN_FRONTEND=noninteractive apt install -y curl zip python3-dev build-essential libhdf5-serial-dev netcdf-bin libnetcdf-dev
 
-USER root
+# Stage 2 - Input Python dependencies
+FROM stage1 as stage2
+COPY requirements.txt /app/requirements.txt
+RUN /usr/local/bin/python -m venv /app/env \
+        && /app/env/bin/pip install -r /app/requirements.txt
 
-RUN apt-get update
-RUN apt-get install -y python3.6-dev \
-                       python3-pip \
-                       wget \
-                       build-essential \
-                       software-properties-common \
-                       apt-utils \
-                       ffmpeg \
-                       libsm6 \
-                       libxext6
-
-RUN apt-get update
-RUN apt-get install -y libgdal-dev
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements.txt
-RUN ldconfig
-RUN apt-get install -y locales && locale-gen en_US.UTF-8
-ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
-
-ENTRYPOINT [ "/usr/bin/python3", "/opt/script.py" ]
+# Stage 5 - Copy and execute module
+FROM stage3 as stage4
+COPY run_setfinder.py /app/run_setfinder.py
+COPY ./sets /app/sets/
+LABEL version="1.0" \
+        description="Containerized setfinder module."
+ENTRYPOINT ["/app/env/bin/python3", "/app/run_setfinder.py"]
