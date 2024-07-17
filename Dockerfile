@@ -14,7 +14,7 @@ RUN /usr/local/bin/python -m venv /app/env \
         && /app/env/bin/pip install -r /app/requirements.txt
 
 # Stage 5 - Copy and execute module
-FROM stage3 as stage4
+FROM stage2 as stage3
 COPY run_setfinder.py /app/run_setfinder.py
 COPY ./sets /app/sets/
 LABEL version="1.0" \
