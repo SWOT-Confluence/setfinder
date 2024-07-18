@@ -140,6 +140,10 @@ def main():
 
     # SWORD
     sword_filepath = os.path.join(indir, 'sword', f'{continent_prefix}_sword_v{sword_version}_patch.nc')
+    if not os.path.exists(sword_filepath):
+        print('No SWORD found for', continent_prefix, 'exiting...')
+        exit()
+
     sword = ncf.Dataset(sword_filepath)
 
     # Get list of reaches to make sets out of, if expanded look for /mnt/input/swot, if not look for reaches_of_interest.json
