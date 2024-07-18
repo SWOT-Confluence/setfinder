@@ -1,5 +1,6 @@
 FROM ubuntu:18.04
 
+FROM ubuntu:18.04 as STAGE_0
 WORKDIR /opt
 COPY . /opt
 
@@ -16,8 +17,11 @@ RUN apt-get install -y python3.6-dev \
                        libsm6 \
                        libxext6
 
+FROM STAGE_0 as STAGE_1
 RUN apt-get update
 RUN apt-get install -y libgdal-dev
+
+FROM STAGE_1 as STAGE_2
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN ldconfig
