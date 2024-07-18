@@ -87,7 +87,7 @@ def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expa
         
         reach_list = [i for i in reaches_of_interest if str(i)[0] in continent_id_list]
     else:
-        reach_list = [os.path.basename(i).split('_')[0] for i in glob.glob(os.path.join(indir, 'swot', '*.nc'))]
+        reach_list = [os.path.basename(i).split('_')[0] for i in glob.glob(os.path.join(indir, 'swot', '*.nc')) if os.path.basename(i).split('_')[0][0] in continent_id_list]
 
     return reach_list
 
