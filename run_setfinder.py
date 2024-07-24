@@ -92,11 +92,11 @@ def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expa
         
         reach_list = [i for i in reaches_of_interest if str(i)[0] in continent_id_list]
     else:
-        reach_list = [os.path.basename(i).split('_')[0] for i in glob.glob(os.path.join(indir, 'swot', '*.nc'))]
+        reach_list = [os.path.basename(i).split('_')[0] for i in glob.glob(os.path.join(indir, 'swot', '*.nc')) if os.path.basename(i).split('_')[0][0] in continent_id_list]
 
     return reach_list
 
-def save_reach_list(outdir:str, reach_list:list, continent_prefix:str, expanded:bool):
+def save_reach_list(outdir:str, reachesjson_dict:dict, continent_prefix:str, expanded:bool):
     print('saving reach list')
 
     if expanded:
@@ -105,7 +105,7 @@ def save_reach_list(outdir:str, reach_list:list, continent_prefix:str, expanded:
         output_filepath = os.path.join(outdir,f'reaches_{continent_prefix}.json')
 
     with open(output_filepath, 'w') as jsonfile:
-        json.dump(reach_list, jsonfile)
+        json.dump(reachesjson_dict, jsonfile)
 
 def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int):
 
@@ -114,7 +114,7 @@ def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_ver
         reach_dict_list.append(
             {
             "reach_id": int(i),
-            "sword": f"{continent_prefix}_sword_v{sword_version}.nc",
+            "sword": f"{continent_prefix}_sword_v{sword_version}_patch.nc",
             "swot": f"{i}_SWOT.nc",
             "sos": f"{continent_prefix}_sword_v{sword_version}_SOS_priors.nc"
             }
@@ -145,7 +145,11 @@ def main():
     continent_prefix, continent_id_list = get_continent(indir=indir, index=index)
 
     # SWORD
-    sword_filepath = os.path.join(indir, 'sword', f'{continent_prefix}_sword_v{sword_version}.nc')
+    sword_filepath = os.path.join(indir, 'sword', f'{continent_prefix}_sword_v{sword_version}_patch.nc')
+    if not os.path.exists(sword_filepath):
+        print('No SWORD found for', continent_prefix, 'exiting...')
+        exit()
+
     sword = ncf.Dataset(sword_filepath)
 
     # Get list of reaches to make sets out of, if expanded look for /mnt/input/swot, if not look for reaches_of_interest.json
@@ -154,7 +158,7 @@ def main():
     else:
         reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
 
-    reach_dict_list = parse_reach_list_for_output(reach_list=reach_list, continent_prefix=continent_prefix, sword_version=sword_version)
+    reach_dict_list = parse_reach_list_for_output(reach_list=list(set(reach_list)), continent_prefix=continent_prefix, sword_version=sword_version)
 
     # Generate sets for FLPEs
     reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
@@ -162,7 +166,9 @@ def main():
                         sword_dataset = sword, sword_filepath = sword_filepath, 
                         expanded = expanded)
 
-    save_reach_list(outdir=outdir, reach_list=list(set(reach_list)), continent_prefix=continent_prefix, expanded=expanded)
+    save_reach_list(outdir=outdir, reachesjson_dict=reach_dict_list, continent_prefix=continent_prefix, expanded=expanded)
+
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
