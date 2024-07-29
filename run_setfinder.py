@@ -157,16 +157,22 @@ def main():
         reach_list = [str(reach) for reach in sword["reaches"]["reach_id"][:]]
     else:
         reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
+    
+    if reach_list:
 
-    reach_dict_list = parse_reach_list_for_output(reach_list=list(set(reach_list)), continent_prefix=continent_prefix, sword_version=sword_version)
+        reach_dict_list = parse_reach_list_for_output(reach_list=list(set(reach_list)), continent_prefix=continent_prefix, sword_version=sword_version)
 
-    # Generate sets for FLPEs
-    reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
-                    output_dir = outdir, algorithms = algorithms, 
-                        sword_dataset = sword, sword_filepath = sword_filepath, 
-                        expanded = expanded)
+        # Generate sets for FLPEs
+        reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
+                        output_dir = outdir, algorithms = algorithms, 
+                            sword_dataset = sword, sword_filepath = sword_filepath, 
+                            expanded = expanded)
 
-    save_reach_list(outdir=outdir, reachesjson_dict=reach_dict_list, continent_prefix=continent_prefix, expanded=expanded)
+        save_reach_list(outdir=outdir, reachesjson_dict=reach_dict_list, continent_prefix=continent_prefix, expanded=expanded)
+        
+    else:
+        
+        print(f"Reach list is empty for continent: {continent_prefix.upper()}")
 
 
 
