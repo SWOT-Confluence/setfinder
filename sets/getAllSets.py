@@ -84,7 +84,7 @@ def generate_sets(reaches:list, continent:str, output_dir:str, algorithms:list, 
     #Algorithms=['SIC']
     # Algorithms=['NeoBAM']
 
-    
+    all_reaches = []
     for Algorithm in algorithms:
         print('Getting set for',Algorithm)
         params = SetParameters(Algorithm, continent)
@@ -96,10 +96,13 @@ def generate_sets(reaches:list, continent:str, output_dir:str, algorithms:list, 
         InversionSets=algoset.getsets()
 
         # output to json file        
-        all_reaches = algoset.write_inversion_set_data(InversionSets,output_dir, expanded)
+        all_reaches.extend(algoset.write_inversion_set_data(InversionSets,output_dir, expanded))
 
     #close sword dataset
     sword_dataset.close()
+    
+    all_reaches = list(set(all_reaches))
+    all_reaches.sort()    
     return all_reaches
 
 def SetParameters(algo, cont):
