@@ -71,6 +71,12 @@ def get_args():
                         type=str,
                         help="Name of continent JSON file",
                         default="continent.json")
+    
+    parser.add_argument("-r",
+                        "--reachsubset",
+                        type=str,
+                        help="Name of reach subset file",
+                        default="reaches_of_interest.json")
 
     return parser.parse_args()
 
@@ -88,12 +94,12 @@ def get_continent(indir:str, index:int, continent_json:str):
 
     return continent_prefix, continent_id_list
 
-def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expanded:bool):
+def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expanded:bool, reach_subset_file:str):
 
     # read in data depending on if it is the first or second run of the setfinder and return a list of reaches to consider
 
     if expanded:
-        with open(os.path.join(indir, 'reaches_of_interest.json')) as jsonfile:
+        with open(os.path.join(indir, reach_subset_file)) as jsonfile:
             reaches_of_interest = json.load(jsonfile)
         
         reach_list = [i for i in reaches_of_interest if str(i)[0] in continent_id_list]
@@ -111,7 +117,7 @@ def save_reach_list(outdir:str, reachesjson_dict:dict, continent_prefix:str, exp
         output_filepath = os.path.join(outdir,f'reaches_{continent_prefix}.json')
 
     with open(output_filepath, 'w') as jsonfile:
-        json.dump(reachesjson_dict, jsonfile)
+        json.dump(reachesjson_dict, jsonfile, indent=2)
 
 def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int):
 
@@ -140,6 +146,7 @@ def main():
     expanded = args.expanded
     global_run = args.globalrun
     continent_json = args.jsonfile
+    reach_subset_file = args.reachsubset
 
     # Get index, index -235 indicates that we are running in aws in the management account
     if index == -235:
@@ -163,7 +170,8 @@ def main():
     if global_run:
         reach_list = [str(reach) for reach in sword["reaches"]["reach_id"][:]]
     else:
-        reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list, expanded=expanded)
+        reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list,
+                                    expanded=expanded, reach_subset_file=reach_subset_file)
     
     if reach_list:
 
