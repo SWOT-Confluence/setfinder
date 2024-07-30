@@ -65,13 +65,19 @@ def get_args():
                         '--globalrun', 
                         action='store_true', 
                         help='Global execution so load reaches from SWORD')
+    
+    parser.add_argument("-c",
+                        "--jsonfile",
+                        type=str,
+                        help="Name of continent JSON file",
+                        default="continent.json")
 
     return parser.parse_args()
 
 
-def get_continent(indir:str, index:int):
+def get_continent(indir:str, index:int, continent_json:str):
     # open continent .json to find what continent we are running on
-    continent_json_filepath = os.path.join(indir, 'continent.json')
+    continent_json_filepath = os.path.join(indir, continent_json)
 
     with open(continent_json_filepath) as jsonfile:
         data = json.load(jsonfile)
@@ -133,6 +139,7 @@ def main():
     sword_version = args.sword_version
     expanded = args.expanded
     global_run = args.globalrun
+    continent_json = args.jsonfile
 
     # Get index, index -235 indicates that we are running in aws in the management account
     if index == -235:
@@ -142,7 +149,7 @@ def main():
         index = index
   
     # Find continent prefix for filtering reaches
-    continent_prefix, continent_id_list = get_continent(indir=indir, index=index)
+    continent_prefix, continent_id_list = get_continent(indir=indir, index=index, continent_json=continent_json)
 
     # SWORD
     sword_filepath = os.path.join(indir, 'sword', f'{continent_prefix}_sword_v{sword_version}_patch.nc')
