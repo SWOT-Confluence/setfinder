@@ -551,6 +551,7 @@ class Sets:
 
         with open(out_json, 'w') as json_file:
             json.dump(InversionSetsWrite, json_file, indent=2)
+            print(f"    File written: {out_json}")
         return all_reaches
 
     def get_IS_list(self,InversionSets,swordfile,sosfile,mode):

@@ -118,6 +118,7 @@ def save_reach_list(outdir:str, reachesjson_dict:dict, continent_prefix:str, exp
 
     with open(output_filepath, 'w') as jsonfile:
         json.dump(reachesjson_dict, jsonfile, indent=2)
+        print(f"File written: {output_filepath}")
 
 def parse_reach_list_for_output(reach_list:list, continent_prefix:str, sword_version:int, sword_file:str):
 
