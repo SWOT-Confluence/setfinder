@@ -135,28 +135,22 @@ class Sets:
         n_up_add=0
         while UpstreamReachIsValid:
             upstream_reaches = InversionSet['UpstreamReach']['rch_id_up']
-            upstream_reaches = upstream_reaches.data
-            
-            if not upstream_reaches:
-                kup=[]
-            else:            
+            upstream_reaches = upstream_reaches.data            
+            if upstream_reaches.shape[0] == 1 and upstream_reaches[0] != 0:
                 kup=np.argwhere(swordreachids == upstream_reaches)
-
-            if len(kup)!=1:
-                  UpstreamReachIsValid=False
+                kup=kup[0,0]
+                sword_data_reach_up=self.pull_sword_attributes_for_reach(sword_data_continent,kup)
+                UpstreamReachIsValid=self.CheckReaches(sword_data_reach,sword_data_reach_up,'up',CheckVerbosity)
+                if UpstreamReachIsValid:
+                    #its valid, add a new reach to the set
+                    InversionSet['Reaches'][sword_data_reach_up['reach_id']]=sword_data_reach_up
+                    InversionSet['UpstreamReach']=sword_data_reach_up
+                    n_up_add+=1
+                    if n_up_add > self.params['MaximumReachesEachDirection']:
+                        UpstreamReachIsValid=False
             else:
-                  kup=kup[0,0]
-                  sword_data_reach_up=self.pull_sword_attributes_for_reach(sword_data_continent,kup)
-                  UpstreamReachIsValid=self.CheckReaches(sword_data_reach,sword_data_reach_up,'up',CheckVerbosity)
+                UpstreamReachIsValid=False
 
-            if UpstreamReachIsValid:
-                #its valid, add a new reach to the set
-                InversionSet['Reaches'][sword_data_reach_up['reach_id']]=sword_data_reach_up
-                InversionSet['UpstreamReach']=sword_data_reach_up
-                n_up_add+=1
-                if n_up_add > self.params['MaximumReachesEachDirection']:
-                    UpstreamReachIsValid=False
-                    
         #print('added',n_up_add,'reaches in upstream direction')
                     
 
@@ -166,20 +160,10 @@ class Sets:
         while DownstreamReachIsValid:
             downstream_reaches = InversionSet['DownstreamReach']['rch_id_dn']
             downstream_reaches = downstream_reaches.data
-            
-            if not downstream_reaches:
-                kdn=[]
-            else:
+            if downstream_reaches.shape[0] == 1 and downstream_reaches[0] != 0:
                 kdn=np.argwhere(swordreachids == downstream_reaches)
-
-            if len(kdn)!=1:
-                DownstreamReachIsValid=False
-            else:
                 kdn=kdn[0,0]
                 sword_data_reach_dn=self.pull_sword_attributes_for_reach(sword_data_continent,kdn)
-                
-                # print('checking...',sword_data_reach_dn['reach_id'])
-                
                 DownstreamReachIsValid=self.CheckReaches(sword_data_reach,sword_data_reach_dn,'down',CheckVerbosity)
                 if DownstreamReachIsValid:
                     InversionSet['Reaches'][sword_data_reach_dn['reach_id']]=sword_data_reach_dn
@@ -187,6 +171,8 @@ class Sets:
                     n_dn_add+=1
                     if n_dn_add > self.params['MaximumReachesEachDirection']:
                         DownstreamReachIsValid=False
+            else:
+                DownstreamReachIsValid=False
                         
         #print('added',n_dn_add,'reaches in downstream direction')
         
