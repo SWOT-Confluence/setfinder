@@ -136,7 +136,11 @@ class Sets:
         while UpstreamReachIsValid:
             upstream_reaches = InversionSet['UpstreamReach']['rch_id_up']
             upstream_reaches = upstream_reaches.data
-            kup=np.argwhere(swordreachids == upstream_reaches)
+            
+            if not upstream_reaches:
+                kup=[]
+            else:            
+                kup=np.argwhere(swordreachids == upstream_reaches)
 
             if len(kup)!=1:
                   UpstreamReachIsValid=False
@@ -160,7 +164,13 @@ class Sets:
         DownstreamReachIsValid=True
         n_dn_add=0
         while DownstreamReachIsValid:
-            kdn=np.argwhere(swordreachids == InversionSet['DownstreamReach']['rch_id_dn'])
+            downstream_reaches = InversionSet['DownstreamReach']['rch_id_dn']
+            downstream_reaches = downstream_reaches.data
+            
+            if not downstream_reaches:
+                kdn=[]
+            else:
+                kdn=np.argwhere(swordreachids == downstream_reaches)
 
             if len(kdn)!=1:
                 DownstreamReachIsValid=False
