@@ -1,5 +1,5 @@
 # Job Definition
-resource "aws_batch_job_definition" "generate_batch_jd_datagen" {
+resource "aws_batch_job_definition" "generate_batch_jd_setfinder" {
   name                  = "${var.prefix}-setfinder"
   type                  = "container"
   container_properties  = <<CONTAINER_PROPERTIES
