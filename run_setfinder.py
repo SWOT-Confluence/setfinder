@@ -75,8 +75,7 @@ def get_args():
     parser.add_argument("-r",
                         "--reachsubset",
                         type=str,
-                        help="Name of reach subset file",
-                        default="reaches_of_interest.json")
+                        help="Name of reach subset file")
 
     return parser.parse_args()
 
@@ -98,7 +97,7 @@ def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expa
 
     # read in data depending on if it is the first or second run of the setfinder and return a list of reaches to consider
 
-    if expanded:
+    if expanded or reach_subset_file:
         with open(os.path.join(indir, reach_subset_file)) as jsonfile:
             reaches_of_interest = json.load(jsonfile)
         
