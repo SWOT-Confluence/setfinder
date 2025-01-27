@@ -87,7 +87,7 @@ def generate_sets(reaches:list, continent:str, output_dir:str, algorithms:list, 
     all_reaches = []
     for Algorithm in algorithms:
         print('Getting set for',Algorithm)
-        params = SetParameters(Algorithm, continent)
+        params = SetParameters(Algorithm, continent, expanded)
         # print(params)
         for key, value in params.items():
             print("    {} : {}.".format(key.capitalize(), value))
@@ -105,7 +105,7 @@ def generate_sets(reaches:list, continent:str, output_dir:str, algorithms:list, 
     all_reaches.sort()    
     return all_reaches
 
-def SetParameters(algo, cont):
+def SetParameters(algo, cont, expanded):
     """Seting parameters for setfinder
 
     Parameters
@@ -126,7 +126,7 @@ def SetParameters(algo, cont):
     """    
     LargeNumber=1000
 
-    RequireAllReachesInFile=True #usual operation, set this to true, False makes it expand
+    RequireAllReachesInFile=not expanded #usual operation, set this to true, False makes it expand
     # RequireAllReachesInFile=False #in dev set "step 1" set this to false, so we can scrape a list of all reaches in sets
 
     

@@ -75,8 +75,7 @@ def get_args():
     parser.add_argument("-r",
                         "--reachsubset",
                         type=str,
-                        help="Name of reach subset file",
-                        default="reaches_of_interest.json")
+                        help="Name of reach subset file")
 
     return parser.parse_args()
 
@@ -98,7 +97,7 @@ def get_reach_list(indir:str, continent_prefix:str, continent_id_list:list, expa
 
     # read in data depending on if it is the first or second run of the setfinder and return a list of reaches to consider
 
-    if expanded:
+    if expanded or reach_subset_file:
         with open(os.path.join(indir, reach_subset_file)) as jsonfile:
             reaches_of_interest = json.load(jsonfile)
         
@@ -179,7 +178,7 @@ def main():
     else:
         reach_list = get_reach_list(indir=indir, continent_prefix=continent_prefix, continent_id_list=continent_id_list,
                                     expanded=expanded, reach_subset_file=reach_subset_file)
-    print(f"Number of reaches to process: {len(reach_list)}")
+    print(f"Number of reaches to process: {len(list(set(reach_list)))}")
     
     if reach_list:
 
@@ -187,11 +186,19 @@ def main():
         reach_dict_list = parse_reach_list_for_output(reach_list=list(set(reach_list)), continent_prefix=continent_prefix,
                                                       sword_version=sword_version, sword_file=sword_file)
 
+        print('here is how many before generation of sets', len(list(set(reach_list))))
+
         # Generate sets for FLPEs
         reach_list = generate_sets(reaches = reach_dict_list, continent=continent_prefix, 
                         output_dir = outdir, algorithms = algorithms, 
                             sword_dataset = sword, sword_filepath = sword_filepath, 
                             expanded = expanded)
+
+        print('here is how many after generation of sets', len(list(set(reach_list))))
+        print(reach_list[:5])
+
+        reach_dict_list = parse_reach_list_for_output(reach_list=list(set(reach_list)), continent_prefix=continent_prefix,
+                                                      sword_version=sword_version, sword_file=sword_file)
 
         save_reach_list(outdir=outdir, reachesjson_dict=reach_dict_list, continent_prefix=continent_prefix, expanded=expanded)
         
