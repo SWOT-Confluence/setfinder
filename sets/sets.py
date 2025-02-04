@@ -75,12 +75,16 @@ class Sets:
         
             sword_data_reach=self.pull_sword_attributes_for_reach(sword_data_continent,k)
 
+            # Check and see if there are reaches up and down for the reach
             if sword_data_reach['n_rch_up']==1 and sword_data_reach['n_rch_down']==1:
-                InversionSet=self.find_set_for_reach(sword_data_reach,swordreachids,sword_data_continent)
-                InversionSet['ReachList'],InversionSet['numReaches']=self.get_reach_list(InversionSet)
-                InversionSets[reach['reach_id']]=InversionSet
-            
 
+                # Check and be sure the above isn't an error, sometimes SWORD v16 has it so that the number of reaches up variable says 1, but the reach id is 0
+                if len(sword_data_reach['rch_id_up'])==1 and len(sword_data_reach['rch_id_dn']) == 1:
+                    if sword_data_reach['rch_id_up'][0] != 0 and sword_data_reach['rch_id_dn'][0] != 0:
+                        InversionSet=self.find_set_for_reach(sword_data_reach,swordreachids,sword_data_continent)
+                        InversionSet['ReachList'],InversionSet['numReaches']=self.get_reach_list(InversionSet)
+                        InversionSets[reach['reach_id']]=InversionSet
+            
         return InversionSets
 
     def pull_sword_attributes_for_reach(self,sword_data_continent,k):
@@ -188,6 +192,14 @@ class Sets:
         
         AdjacentReachIsRiver=str(sword_data_reach_adjacent['reach_id'])[-1]=='1'
 
+        AdjacentReachHasValidUp = True
+        if len(sword_data_reach_adjacent['rch_id_up']) > 0:
+            AdjacentReachHasValidUp=sword_data_reach_adjacent['rch_id_up'][0] != 0
+
+        AdjacentReachHasValidDown = True
+        if len(sword_data_reach_adjacent['rch_id_dn']) > 0:
+            AdjacentReachHasValidDown=sword_data_reach_adjacent['rch_id_dn'][0] != 0
+            
         OrbitsAreIdentical=False
         if sword_data_reach['swot_obs']==sword_data_reach_adjacent['swot_obs']:
             OrbitsAreIdentical=list(sword_data_reach['swot_orbits'])==list(sword_data_reach_adjacent['swot_orbits'])
@@ -208,6 +220,10 @@ class Sets:
         if self.params['RequireSetReachesInput'] and not AdjacentReachInReaches:
             ReachesMakeAValidSet=False
         if not AdjacentReachIsRiver:
+            ReachesMakeAValidSet=False
+        if not AdjacentReachHasValidDown:
+            ReachesMakeAValidSet=False
+        if not AdjacentReachHasValidUp:
             ReachesMakeAValidSet=False
      
         if verbose:
