@@ -138,7 +138,8 @@ def SetParameters(algo, cont, expanded):
         params['AllowRiverJunction']=False
         params['Filename']=f'metrosets_{cont.lower()}.json'
         params['MaximumReachesEachDirection']=2
-        params['MinimumReaches']=3
+        #params['MinimumReaches']=3
+        params['MinimumReaches']=1
         params['AllowedReachOverlap']=-1 # specify -1 to just remove duplicates
         params['RequireSetReachesInput']=RequireAllReachesInFile # typically set to true: requires all reaches in set to be in input reach list
         # params['']
